@@ -7,4 +7,4 @@ rule esm_master_install_tux:
     log:
         "logs/esm_master/tux.log",
     wrapper:
-        "master/esm-master"
+        "https://github.com/pgierz/snakemake-wrapper-esm-master/raw/master/esm_master_install"
