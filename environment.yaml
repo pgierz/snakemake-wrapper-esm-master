@@ -1,0 +1,8 @@
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python >=3.8
+  - pip
+  - pip:
+    - git+https://github.com/esm-tools/esm_tools.git@v6.59.0

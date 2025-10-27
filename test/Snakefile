@@ -1,0 +1,10 @@
+rule esm_master_install_tux:
+    output:
+        touch("results/tux.installed"),
+    params:
+        model="tux",
+        version="1.0",
+    log:
+        "logs/esm_master/tux.log",
+    wrapper:
+        "master/esm-master"

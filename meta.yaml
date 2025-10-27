@@ -1,0 +1,24 @@
+name: esm-master install
+authors:
+  - Paul Gierz
+url: https://github.com/esm-tools/esm_tools
+description: |
+  Installs ESM-Master models using the esm-tools package.
+
+  This wrapper executes the esm-master installation command for specific
+  model versions, enabling automated installation of Earth System Models
+  within Snakemake workflows.
+input:
+  - None (installation command does not require input files)
+output:
+  - Installed model files in the esm-master directory structure
+params:
+  - model: Model name to install (e.g., "awicm", "fesom")
+  - version: Model version to install (e.g., "2.0", "3.0")
+  - extra: Additional command-line arguments to pass to esm-master (optional)
+notes: |
+  * The esm-master command installs models into the configured esm-tools
+    directory structure.
+  * This wrapper requires esm-tools v6.59.0 or compatible version.
+  * Model and version parameters are required and should match available
+    esm-master model configurations.

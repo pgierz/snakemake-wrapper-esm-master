@@ -9,6 +9,10 @@ log = snakemake.log_fmt_shell(stdout=True, stderr=True)
 
 model_name = snakemake.params.get("model")
 model_version = snakemake.params.get("version")
+extra = snakemake.params.get("extra", "")
 
-
-shell(f"esm-master install-{model_name}-{model_version}")
+shell(
+    "esm-master install-{model_name}-{model_version}"
+    " {extra}"
+    " {log}"
+)
