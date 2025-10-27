@@ -1,4 +1,4 @@
-rule esm_master_install_tux:
+rule esm_master_install_awiesm:
     output:
         touch("results/awiesm-2.6.installed"),
     params:
