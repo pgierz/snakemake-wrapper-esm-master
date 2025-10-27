@@ -1,10 +1,10 @@
 # Snakemake Wrapper: ESM-Master Install
 
-A [Snakemake](https://snakemake.readthedocs.io) wrapper for installing Earth System Models using [esm-tools](https://github.com/esm-tools/esm_tools) `esm-master` command.
+A [Snakemake](https://snakemake.readthedocs.io) wrapper for installing Earth System Models using [esm-tools](https://github.com/esm-tools/esm_tools) `esm_master` command.
 
 ## Overview
 
-This wrapper executes the `esm-master install-<model>-<version>` command, which downloads, configures, and compiles Earth System Models as part of a Snakemake workflow.
+This wrapper executes the `esm_master install-<model>-<version>` command, which downloads, configures, and compiles Earth System Models as part of a Snakemake workflow.
 
 The `install` meta-command performs three operations:
 1. **get**: Downloads model source code from repositories
@@ -80,11 +80,11 @@ snakemake --use-conda -c1
 
 ### Optional Parameters
 
-- **extra** (str): Additional command-line arguments to pass to `esm-master` (e.g., "--verbose", "--check", "--ignore-errors")
+- **extra** (str): Additional command-line arguments to pass to `esm_master` (e.g., "--verbose", "--check", "--ignore-errors")
 
 ## Output
 
-The wrapper doesn't produce specific output files by design, as `esm-master` installs models into its configured directory structure. Use `touch()` to create a marker file indicating successful installation:
+The wrapper doesn't produce specific output files by design, as `esm_master` installs models into its configured directory structure. Use `touch()` to create a marker file indicating successful installation:
 
 ```python
 output:
@@ -93,7 +93,7 @@ output:
 
 ## Log Files
 
-All stdout and stderr from the `esm-master` command are captured in the specified log file:
+All stdout and stderr from the `esm_master` command are captured in the specified log file:
 
 ```python
 log:
@@ -126,7 +126,7 @@ Common models supported by esm-tools include:
 
 For a complete list of available models and versions, consult the [esm-tools documentation](https://esm-tools.readthedocs.io) or run:
 ```bash
-esm-master --list_all_targets
+esm_master --list_all_targets
 ```
 
 ## Example Workflow
@@ -161,7 +161,7 @@ rule install_model:
 
 ## Notes
 
-- The `esm-master install` command performs a full installation (download, configure, compile)
+- The `esm_master install` command performs a full installation (download, configure, compile)
 - Installation locations are determined by esm-tools configuration
 - For large models, compilation may take significant time and resources
 - Use the `tux-1.0` test model for quick validation of the wrapper
