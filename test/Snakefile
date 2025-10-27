@@ -1,10 +1,10 @@
 rule esm_master_install_tux:
     output:
-        touch("results/tux.installed"),
+        touch("results/awiesm-2.6.installed"),
     params:
-        model="tux",
-        version="1.0",
+        model="awiesm",
+        version="2.6",
     log:
-        "logs/esm_master/tux.log",
+        "logs/esm_master/awiesm-2.6.log",
     wrapper:
         "https://github.com/pgierz/snakemake-wrapper-esm-master/raw/master/esm_master_install"
