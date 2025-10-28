@@ -7,8 +7,9 @@ from snakemake.shell import shell
 
 log = snakemake.log_fmt_shell(stdout=True, stderr=True)
 
+subcommand = snakemake.params.get("subcommand", "install")
 model_name = snakemake.params.get("model")
 model_version = snakemake.params.get("version")
 extra = snakemake.params.get("extra", "")
 
-shell("esm_master install-{model_name}-{model_version}" " {extra}" " {log}")
+shell("esm_master {subcommand}-{model_name}-{model_version} {extra} {log}")

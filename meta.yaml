@@ -1,24 +1,34 @@
-name: esm-master install
+name: esm-master
 authors:
   - Paul Gierz
 url: https://github.com/esm-tools/esm_tools
 description: |
-  Installs ESM-Master models using the esm-tools package.
+  Execute esm-master commands for Earth System Models using the esm-tools package.
 
-  This wrapper executes the esm-master installation command for specific
-  model versions, enabling automated installation of Earth System Models
-  within Snakemake workflows.
+  This wrapper executes esm-master subcommands (get, conf, comp, clean, install,
+  recomp) for specific model versions, enabling automated management of Earth
+  System Models within Snakemake workflows.
+
+  Each subcommand performs a specific operation:
+  - get: Download model source code from repositories
+  - conf: Configure the model for compilation
+  - comp: Compile the model binaries
+  - clean: Clean build artifacts
+  - install: Complete installation (get + conf + comp)
+  - recomp: Reconfigure and recompile the model
 input:
-  - None (installation command does not require input files)
+  - None (esm-master commands do not require input files)
 output:
-  - Installed model files in the esm-master directory structure
+  - Model files in the esm-tools directory structure (operation dependent)
 params:
-  - model: Model name to install (e.g., "awicm", "fesom")
-  - version: Model version to install (e.g., "2.0", "3.0")
+  - subcommand: ESM-Master operation to perform (default: "install")
+  - model: Model name (e.g., "awicm", "fesom")
+  - version: Model version (e.g., "2.0", "3.0")
   - extra: Additional command-line arguments to pass to esm-master (optional)
 notes: |
-  * The esm-master command installs models into the configured esm-tools
+  * The esm-master command operates on models in the configured esm-tools
     directory structure.
   * This wrapper requires esm-tools v6.59.0 or compatible version.
   * Model and version parameters are required and should match available
     esm-master model configurations.
+  * Subcommand defaults to "install" for backward compatibility.

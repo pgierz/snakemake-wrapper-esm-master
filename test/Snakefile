@@ -1,10 +1,53 @@
+# Test default behavior (install subcommand)
 rule esm_master_install_awiesm:
     output:
         touch("results/awiesm-2.6.installed"),
     params:
         model="awiesm",
         version="2.6",
+        # subcommand defaults to "install"
     log:
-        "logs/esm_master/awiesm-2.6.log",
+        "logs/esm_master/awiesm-2.6-install.log",
+    wrapper:
+        "https://github.com/pgierz/snakemake-wrapper-esm-master/raw/master/esm_master_install"
+
+# Test explicit subcommand usage
+rule esm_master_get_tux:
+    output:
+        touch("results/tux-1.0.downloaded"),
+    params:
+        subcommand="get",
+        model="tux",
+        version="1.0",
+    log:
+        "logs/esm_master/tux-1.0-get.log",
+    wrapper:
+        "https://github.com/pgierz/snakemake-wrapper-esm-master/raw/master/esm_master_install"
+
+rule esm_master_conf_tux:
+    input:
+        "results/tux-1.0.downloaded",
+    output:
+        touch("results/tux-1.0.configured"),
+    params:
+        subcommand="conf",
+        model="tux",
+        version="1.0",
+    log:
+        "logs/esm_master/tux-1.0-conf.log",
+    wrapper:
+        "https://github.com/pgierz/snakemake-wrapper-esm-master/raw/master/esm_master_install"
+
+rule esm_master_comp_tux:
+    input:
+        "results/tux-1.0.configured",
+    output:
+        touch("results/tux-1.0.compiled"),
+    params:
+        subcommand="comp",
+        model="tux",
+        version="1.0",
+    log:
+        "logs/esm_master/tux-1.0-comp.log",
     wrapper:
         "https://github.com/pgierz/snakemake-wrapper-esm-master/raw/master/esm_master_install"
