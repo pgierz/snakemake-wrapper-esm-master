@@ -28,7 +28,6 @@ params:
 notes: |
   * The esm-master command operates on models in the configured esm-tools
     directory structure.
-  * This wrapper requires esm-tools v6.59.0 or compatible version.
   * Model and version parameters are required and should match available
     esm-master model configurations.
   * Subcommand defaults to "install" for backward compatibility.

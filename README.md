@@ -200,7 +200,7 @@ log:
 
 ### Dependencies
 
-- **esm-tools** v6.59.0 (installed from git via pip)
+- **esm-tools** v6.59.2 (installed from git via pip)
 - **Python** >= 3.8
 
 The wrapper automatically creates a conda environment with these dependencies.

@@ -1,1 +1,0 @@
-git+https://github.com/esm-tools/esm_tools.git@v6.59.0
