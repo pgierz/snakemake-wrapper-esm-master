@@ -7,9 +7,9 @@ rule esm_master_install_awiesm:
         version="2.6",
         # subcommand defaults to "install"
     log:
-        "logs/esm_master/awiesm-2.6-install.log",
+        "log/esm_master/awiesm-2.6-install.log",
     wrapper:
-        "https://github.com/pgierz/snakemake-wrapper-esm-master/raw/master/esm_master_install"
+        "https://github.com/pgierz/snakemake-wrapper-esm-master/raw/master/esm_master"
 
 # Test explicit subcommand usage
 rule esm_master_get_tux:
@@ -20,9 +20,9 @@ rule esm_master_get_tux:
         model="tux",
         version="1.0",
     log:
-        "logs/esm_master/tux-1.0-get.log",
+        "log/esm_master/tux-1.0-get.log",
     wrapper:
-        "https://github.com/pgierz/snakemake-wrapper-esm-master/raw/master/esm_master_install"
+        "https://github.com/pgierz/snakemake-wrapper-esm-master/raw/master/esm_master"
 
 rule esm_master_conf_tux:
     input:
@@ -34,9 +34,9 @@ rule esm_master_conf_tux:
         model="tux",
         version="1.0",
     log:
-        "logs/esm_master/tux-1.0-conf.log",
+        "log/esm_master/tux-1.0-conf.log",
     wrapper:
-        "https://github.com/pgierz/snakemake-wrapper-esm-master/raw/master/esm_master_install"
+        "https://github.com/pgierz/snakemake-wrapper-esm-master/raw/master/esm_master"
 
 rule esm_master_comp_tux:
     input:
@@ -48,6 +48,6 @@ rule esm_master_comp_tux:
         model="tux",
         version="1.0",
     log:
-        "logs/esm_master/tux-1.0-comp.log",
+        "log/esm_master/tux-1.0-comp.log",
     wrapper:
-        "https://github.com/pgierz/snakemake-wrapper-esm-master/raw/master/esm_master_install"
+        "https://github.com/pgierz/snakemake-wrapper-esm-master/raw/master/esm_master"
