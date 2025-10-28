@@ -1,10 +1,22 @@
-# Snakemake Wrapper: ESM-Master
+# Snakemake Wrappers for ESM-Tools
 
-A [Snakemake](https://snakemake.readthedocs.io) wrapper for managing Earth System Models using [esm-tools](https://github.com/esm-tools/esm_tools) `esm_master` command.
+[Snakemake](https://snakemake.readthedocs.io) wrappers for managing Earth System Models using [esm-tools](https://github.com/esm-tools/esm_tools). This repository provides two complementary wrappers:
+
+1. **esm_master**: Model installation (download, configure, compile)
+2. **esm_runscripts**: Model execution (prepare, run, tidy, post-process)
+
+## Quick Links
+
+- [esm_master Documentation](esm_master/) - Model installation wrapper
+- [esm_runscripts Documentation](esm_runscripts/) - Model execution wrapper
+- [esm-tools GitHub](https://github.com/esm-tools/esm_tools)
+- [esm-tools Documentation](https://esm-tools.readthedocs.io)
 
 ## Overview
 
-This wrapper executes `esm_master` subcommands for Earth System Models as part of a Snakemake workflow. It supports all esm_master operations:
+### esm_master Wrapper
+
+This wrapper executes `esm_master` subcommands for installing Earth System Models. It supports all esm_master operations:
 
 - **get**: Downloads model source code from repositories
 - **conf**: Configures the model for compilation
@@ -15,7 +27,52 @@ This wrapper executes `esm_master` subcommands for Earth System Models as part o
 
 All subcommands follow the pattern: `esm_master <subcommand>-<model>-<version>`
 
-## Usage
+### esm_runscripts Wrapper
+
+This wrapper executes `esm_runscripts` phases for running Earth System Model simulations. It supports all simulation phases:
+
+- **prepcompute**: Prepares files and environment before computation
+- **compute**: Executes the coupled model simulation
+- **tidy**: Post-run cleanup and file management
+- **post**: Post-processing and data analysis
+
+The wrapper uses a sophisticated two-stage approach:
+1. **Resource extraction**: Automatically determines SLURM resource requirements
+2. **Execution**: Runs simulation phases within Snakemake's resource management
+
+See the [esm_runscripts README](esm_runscripts/README.md) for detailed documentation.
+
+## Complete Workflow Example
+
+Here's how both wrappers work together:
+
+```python
+from esm_runscripts_wrapper import get_resources
+
+# 1. Install the model (esm_master)
+rule install_model:
+    output: touch("models/awicm-3.0/.installed")
+    params:
+        model="awicm",
+        version="3.0"
+    wrapper: "file://esm_master"
+
+# 2. Run the simulation (esm_runscripts)
+rule run_simulation:
+    input: "models/awicm-3.0/.installed"
+    output: touch("results/exp001_complete.done")
+    params:
+        runscript="awicm.yaml",
+        task="compute",
+        expid="exp001"
+    resources:
+        **get_resources("awicm.yaml", "compute", expid="exp001")
+    wrapper: "file://esm_runscripts"
+```
+
+---
+
+## esm_master Usage
 
 ### Installation (Default)
 

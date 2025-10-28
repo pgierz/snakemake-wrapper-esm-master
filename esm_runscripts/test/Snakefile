@@ -1,0 +1,173 @@
+"""
+Test Snakefile for esm_runscripts wrapper.
+
+This demonstrates both granular phase-by-phase execution and
+full workflow orchestration with Snakemake.
+"""
+
+import sys
+from pathlib import Path
+
+# Add parent directory to path for helper import
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from helper import get_resources
+
+
+# ==============================================================================
+# Configuration
+# ==============================================================================
+
+# Test experiment IDs
+EXPID_SINGLE = "test_single"
+EXPID_FULL = "test_full"
+
+# Test runscript (you'll need to provide this)
+RUNSCRIPT = "test_runscript.yaml"
+
+
+# ==============================================================================
+# Test 1: Single Phase Execution
+# ==============================================================================
+
+rule test_single_phase:
+    """Test executing a single phase (prepcompute only)."""
+    output:
+        touch(f"results/{EXPID_SINGLE}_prepcompute.done")
+    params:
+        runscript=RUNSCRIPT,
+        task="prepcompute",
+        expid=EXPID_SINGLE
+    resources:
+        **get_resources(RUNSCRIPT, "prepcompute", expid=EXPID_SINGLE)
+    log:
+        f"logs/{EXPID_SINGLE}_prepcompute.log"
+    wrapper:
+        "file://../"
+
+
+# ==============================================================================
+# Test 2: Full Workflow with Phase Dependencies
+# ==============================================================================
+
+rule test_full_workflow:
+    """Test complete workflow: prepcompute -> compute -> tidy."""
+    input:
+        f"results/{EXPID_FULL}_tidy.done"
+
+
+rule full_prepcompute:
+    """Prepare files and environment for computation."""
+    output:
+        touch(f"results/{EXPID_FULL}_prepcompute.done")
+    params:
+        runscript=RUNSCRIPT,
+        task="prepcompute",
+        expid=EXPID_FULL
+    resources:
+        **get_resources(RUNSCRIPT, "prepcompute", expid=EXPID_FULL)
+    log:
+        f"logs/{EXPID_FULL}_prepcompute.log"
+    wrapper:
+        "file://../"
+
+
+rule full_compute:
+    """Execute model simulation."""
+    input:
+        f"results/{EXPID_FULL}_prepcompute.done"
+    output:
+        touch(f"results/{EXPID_FULL}_compute.done")
+    params:
+        runscript=RUNSCRIPT,
+        task="compute",
+        expid=EXPID_FULL
+    resources:
+        **get_resources(RUNSCRIPT, "compute", expid=EXPID_FULL)
+    log:
+        f"logs/{EXPID_FULL}_compute.log"
+    wrapper:
+        "file://../"
+
+
+rule full_tidy:
+    """Clean up after computation."""
+    input:
+        f"results/{EXPID_FULL}_compute.done"
+    output:
+        touch(f"results/{EXPID_FULL}_tidy.done")
+    params:
+        runscript=RUNSCRIPT,
+        task="tidy",
+        expid=EXPID_FULL
+    resources:
+        **get_resources(RUNSCRIPT, "tidy", expid=EXPID_FULL)
+    log:
+        f"logs/{EXPID_FULL}_tidy.log"
+    wrapper:
+        "file://../"
+
+
+# ==============================================================================
+# Test 3: With Configuration Override
+# ==============================================================================
+
+rule test_with_override:
+    """Test using configuration override file."""
+    output:
+        touch(f"results/test_override_prepcompute.done")
+    params:
+        runscript=RUNSCRIPT,
+        task="prepcompute",
+        expid="test_override",
+        modify_config="override_config.yaml"  # Optional override
+    resources:
+        **get_resources(
+            RUNSCRIPT,
+            "prepcompute",
+            expid="test_override",
+            modify_config="override_config.yaml"
+        )
+    log:
+        "logs/test_override_prepcompute.log"
+    wrapper:
+        "file://../"
+
+
+# ==============================================================================
+# Test 4: Reusing Configuration
+# ==============================================================================
+
+rule test_reuse_config:
+    """Test reusing existing finished_config.yaml."""
+    input:
+        f"results/{EXPID_FULL}_prepcompute.done"  # Requires prepcompute first
+    output:
+        touch(f"results/test_reuse.done")
+    params:
+        runscript=RUNSCRIPT,
+        task="prepcompute",
+        expid=EXPID_FULL,
+        reuse_config=True  # Reuse existing config
+    log:
+        "logs/test_reuse.log"
+    wrapper:
+        "file://../"
+
+
+# ==============================================================================
+# Default Target
+# ==============================================================================
+
+rule all:
+    """Run all tests."""
+    input:
+        # Single phase test
+        f"results/{EXPID_SINGLE}_prepcompute.done",
+        # Full workflow test
+        f"results/{EXPID_FULL}_tidy.done",
+        # Override test (commented out - requires override file)
+        # "results/test_override_prepcompute.done",
+        # Reuse config test
+        f"results/test_reuse.done"
+    default_target: True

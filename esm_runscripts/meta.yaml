@@ -1,0 +1,196 @@
+name: esm-runscripts
+description: |
+  Snakemake wrapper for esm_runscripts - the execution engine for ESM simulations.
+
+  This wrapper enables Snakemake-based orchestration of Earth System Model simulations
+  by intercepting batch submissions and executing within Snakemake's resource management.
+
+  Supported phases:
+  - prepcompute: Prepare files and environment before computation
+  - compute: Execute model simulation
+  - tidy: Post-run cleanup and file management
+  - post: Post-processing and data analysis
+
+  Architecture:
+  The wrapper uses a two-step process:
+  1. get_resources() helper function runs esm_runscripts --check to extract
+     SLURM resource requirements from the generated finished_config.yaml
+  2. Wrapper executes the generated .run script content (with SLURM directives
+     removed) within Snakemake's allocated resources
+
+  This approach enables:
+  - Full Snakemake DAG control over workflow phases
+  - Automatic resource allocation via SLURM
+  - Granular phase-by-phase execution or full workflows
+  - Proper environment setup (modules, exports) from esm_runscripts
+
+authors:
+  - Paul Gierz
+
+input: []
+
+output: []
+
+params:
+  - runscript:
+      type: str
+      description: >
+        Path to ESM runscript YAML file (required).
+        This is the main configuration file that defines the simulation setup.
+
+  - task:
+      type: str
+      description: >
+        Phase to execute (required). Must be one of:
+        - prepcompute: Prepare computation (file staging, namelist generation)
+        - compute: Run the model simulation
+        - tidy: Clean up after computation
+        - post: Post-process output data
+
+  - expid:
+      type: str
+      description: >
+        Experiment ID (default: "test").
+        Used to identify output directories and file naming.
+
+  - reuse_config:
+      type: bool
+      description: >
+        Reuse existing finished_config.yaml without regenerating (default: false).
+        Set to true for subsequent runs in the same experiment.
+
+  - modify_config:
+      type: str
+      description: >
+        Path to configuration override file (optional).
+        Allows modification of runscript settings without editing the main file.
+
+  - current_date:
+      type: str
+      description: >
+        Override start date for the run (optional).
+        Format should match esm_runscripts date format (YYYY-MM-DD).
+
+  - extra:
+      type: str
+      description: >
+        Additional command-line flags to pass to esm_runscripts (optional).
+        Example: "--verbose --debug"
+
+notes: |
+  ## Basic Usage in Snakefile
+
+  ```python
+  from esm_runscripts_wrapper import get_resources
+
+  rule compute_phase:
+      params:
+          runscript="awicm.yaml",
+          task="compute",
+          expid="exp001"
+      resources:
+          **get_resources("awicm.yaml", "compute", expid="exp001")
+      wrapper:
+          "file://path/to/esm_runscripts"
+  ```
+
+  ## Full Workflow Example
+
+  ```python
+  from esm_runscripts_wrapper import get_resources
+
+  rule all:
+      input: "results/exp001_complete.done"
+
+  rule prepcompute:
+      output: touch("results/exp001_prep.done")
+      params:
+          runscript="awicm.yaml",
+          task="prepcompute",
+          expid="exp001"
+      resources:
+          **get_resources("awicm.yaml", "prepcompute", expid="exp001")
+      wrapper: "file://esm_runscripts"
+
+  rule compute:
+      input: "results/exp001_prep.done"
+      output: touch("results/exp001_compute.done")
+      params:
+          runscript="awicm.yaml",
+          task="compute",
+          expid="exp001"
+      resources:
+          **get_resources("awicm.yaml", "compute", expid="exp001")
+      wrapper: "file://esm_runscripts"
+
+  rule tidy:
+      input: "results/exp001_compute.done"
+      output: touch("results/exp001_complete.done")
+      params:
+          runscript="awicm.yaml",
+          task="tidy",
+          expid="exp001"
+      resources:
+          **get_resources("awicm.yaml", "tidy", expid="exp001")
+      wrapper: "file://esm_runscripts"
+  ```
+
+  ## With Configuration Override
+
+  ```python
+  rule compute_modified:
+      params:
+          runscript="awicm.yaml",
+          task="compute",
+          expid="exp002",
+          modify_config="custom_settings.yaml"
+      resources:
+          **get_resources(
+              "awicm.yaml",
+              "compute",
+              expid="exp002",
+              modify_config="custom_settings.yaml"
+          )
+      wrapper: "file://esm_runscripts"
+  ```
+
+  ## Requirements
+
+  - HPC environment with SLURM batch system
+  - esm-tools v6.59.2 or compatible
+  - Module system for loading software dependencies
+  - Snakemake with SLURM executor configured
+
+  ## Resource Extraction
+
+  The get_resources() helper automatically extracts:
+  - nodes: Number of compute nodes
+  - tasks: Total number of MPI tasks
+  - mem_mb: Memory per task in megabytes
+  - runtime: Wall time in minutes
+  - partition: SLURM partition name (if specified)
+  - account: SLURM account (if specified)
+
+  ## Troubleshooting
+
+  **Config generation fails:**
+  - Ensure runscript path is correct and accessible
+  - Check that esm_runscripts is available in PATH
+  - Verify experiment base directory permissions
+
+  **Run script not found:**
+  - Check that --check mode completed successfully
+  - Verify scripts directory exists in experiment path
+  - Ensure expid matches between config generation and execution
+
+  **Module loads fail:**
+  - Confirm module system is available in compute environment
+  - Check that required modules exist on the system
+  - Verify module names in computer configuration
+
+  **Resource mismatch:**
+  - Ensure get_resources() uses same parameters as wrapper
+  - Check that finished_config.yaml is up to date
+  - Verify SLURM configuration in runscript
+
+url: https://github.com/pgierz/snakemake-wrapper-esm-master
