@@ -1,0 +1,23 @@
+# Table of Contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: index
+parts:
+  - caption: User Guides
+    chapters:
+      - file: guides/installation
+      - file: guides/quickstart
+      - file: guides/esm_master_usage
+      - file: guides/esm_runscripts_usage
+      - file: guides/complete_workflow
+  - caption: API Reference
+    chapters:
+      - file: api/esm_master_wrapper
+      - file: api/esm_runscripts_wrapper
+      - file: api/esm_runscripts_helper
+  - caption: Examples
+    chapters:
+      - file: examples/basic_install
+      - file: examples/simulation_workflow
+      - file: examples/advanced_usage

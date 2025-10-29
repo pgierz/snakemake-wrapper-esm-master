@@ -1,0 +1,72 @@
+# Jupyter Book Configuration
+# Learn more at https://jupyterbook.org/customize/config.html
+
+title: Snakemake ESM-Tools Wrappers
+author: Paul Gierz
+copyright: "2025"
+logo: ""
+
+# Force re-execution of notebooks on each build.
+execute:
+  execute_notebooks: auto
+  timeout: 600
+
+# Define the name of the latex output file for PDF builds
+latex:
+  latex_documents:
+    targetname: snakemake-esm-tools-wrappers.tex
+
+# Add a bibtex file so that we can create citations
+bibtex_bibfiles:
+  - references.bib
+
+# Information about where the book exists on the web
+repository:
+  url: https://github.com/pgierz/snakemake-wrapper-esm-master
+  path_to_book: docs
+  branch: master
+
+# Add GitHub buttons to your book
+html:
+  use_issues_button: true
+  use_repository_button: true
+  use_edit_page_button: true
+  favicon: ""
+  baseurl: ""
+
+# Interact link settings
+launch_buttons:
+  notebook_interface: jupyterlab
+  binderhub_url: ""
+
+parse:
+  myst_enable_extensions:
+    - colon_fence
+    - deflist
+    - dollarmath
+    - fieldlist
+    - html_admonition
+    - html_image
+    - linkify
+    - replacements
+    - smartquotes
+    - strikethrough
+    - substitution
+    - tasklist
+  myst_update_mathjax: false
+
+sphinx:
+  config:
+    html_theme: sphinx_book_theme
+    html_theme_options:
+      repository_url: https://github.com/pgierz/snakemake-wrapper-esm-master
+      use_repository_button: true
+      use_issues_button: true
+      use_edit_page_button: true
+      path_to_docs: docs
+    autodoc_default_options:
+      members: true
+      member-order: bysource
+      special-members: __init__
+      undoc-members: true
+      exclude-members: __weakref__
